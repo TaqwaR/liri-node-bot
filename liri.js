@@ -9,11 +9,9 @@ const spotify = new Spotify(keys.spotify);
 const client = new Twitter(keys.twitter);
 
 const argsArray = process.argv;
-
 let command = process.argv[2];
 let input = process.argv[3];
 
-//let movie = input;
 
 
 
@@ -37,7 +35,6 @@ function spotifyFunc() {
 
       spotify.search({ type: 'track', query: input, limit: 1}).then(function(data) {
       console.log("----------------------------------");
-      //console.log(JSON.stringify(data,null,2));
       console.log("Artist: " + data.tracks.items[0].artists[0].name);
       console.log("Song name: " + data.tracks.items[0].name);
       console.log("Preview URL: " + data.tracks.items[0].preview_url);
@@ -114,26 +111,24 @@ fs.writeFile('random.txt', 'spotify-this-song,"I Want it That Way"', function(er
 
 function doItFunc() {
   fs.readFile('random.txt', "utf8", function(error, data) {
-      if (error) {
-        return console.log(error);
-      } else {
 
-      console.log(data);
+    let dataArr = data.split(",");
+    command = dataArr[0];
+    input = dataArr[1];
 
-      let dataArr = data.split(",");
-      command = dataArr[0];
-      input = dataArr[1];
+    for (var i = 2; i < dataArr.length; i++) {
+      input = input + "+" + dataArr[i];
+    }
 
-      console.log(dataArr);
-      console.log(dataArr[0]);
-      console.log(dataArr[1]);
+    allTheCommands()
 
-      }
-
+    console.log(dataArr);
+    console.log(dataArr[0]);
+    console.log(dataArr[1]);
   })
-
 };
 
+function allTheCommands() {
 
 switch (command) {
   case "my-tweets":
@@ -160,3 +155,7 @@ switch (command) {
     console.log("Please choose one of these commands: " + command.twitter + " " + command.spotify + " " + command.movie + " or " + command.random);
 
 }
+
+};
+
+allTheCommands()

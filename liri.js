@@ -101,8 +101,6 @@ function movieFunc() {
   }
 }
 
-console.log(process.argv);
-
 fs.writeFile('random.txt', 'spotify-this-song,"I Want it That Way"', function(error) {
   if (error) {
     return console.log(error);

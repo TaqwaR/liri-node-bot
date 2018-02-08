@@ -12,18 +12,17 @@ const argsArray = process.argv;
 let command = process.argv[2];
 let input = process.argv[3];
 
-
-
-
 function spotifyFunc() {
 
     if (input === undefined) {
-      spotify.search({ type: 'track', query: "the+sign+ace+of+base", limit: 1}).then(function(data){
+      let input = "the+sign+ace+of+base";
+      spotify.search({ type: 'track', query: input, limit: 1}).then(function(data){
         console.log("----------------------------------");
         console.log("Artist: " + data.tracks.items[0].artists[0].name);
         console.log("Song name: " + data.tracks.items[0].name);
         console.log("Preview URL: " + data.tracks.items[0].preview_url);
         console.log("Album name: " + data.tracks.items[0].album.name);
+        console.log("----------------------------------");
       })
 
     }
@@ -39,22 +38,23 @@ function spotifyFunc() {
       console.log("Song name: " + data.tracks.items[0].name);
       console.log("Preview URL: " + data.tracks.items[0].preview_url);
       console.log("Album name: " + data.tracks.items[0].album.name);
-      })
-
-    }
-};
+      console.log("----------------------------------");
+    });
+  }
+}
 
 function tweetFunc() {
-  var params = {iam_taqwa: 'nodejs'};
-  client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-    for (var i = 0; i < 19; i++) {
-    console.log("----------------------------------");
-    console.log("Created on: " + tweets[i].created_at);
-    console.log("Text: " + tweets[i].text);
-    }
-  }
-});
+    var params = {iam_taqwa: 'nodejs'};
+    client.get('statuses/user_timeline', params, function(error, tweets, response) {
+      if (!error) {
+        for (var i = 0; i < 19; i++) {
+          console.log("----------------------------------");
+          console.log("Created on: " + tweets[i].created_at);
+          console.log("Text: " + tweets[i].text);
+          console.log("----------------------------------");
+        }
+      }
+    });
 };
 
 function movieFunc() {
@@ -65,13 +65,14 @@ function movieFunc() {
   if (input === undefined) {
     omdbQuery = "http://www.omdbapi.com/?t=mr.nobody&y=&plot=short&apikey=226846d0";
     request(omdbQuery, function (error, response, body) {
-      console.log('error:', error);
-      console.log('statusCode:', response && response.statusCode);
-
-      // console.log('body:', JSON.parse(body));
-
-      console.log("----------------------------------");
-      console.log("If you haven't watched 'Mr. Nobody', then you should. ", "\nIt's on Netflix!");
+      if (error) {
+        console.log('error:', error);
+        console.log('statusCode:', response && response.statusCode);
+      } else {
+        console.log("----------------------------------");
+        console.log("If you haven't watched 'Mr. Nobody', then you should. ", "\nIt's on Netflix!");
+        console.log("----------------------------------");
+      }
     });
 
   } else {
@@ -80,12 +81,12 @@ function movieFunc() {
     }
 
     request(omdbQuery, function (error, response, body) {
-    console.log('error:', error);
-    console.log('statusCode:', response && response.statusCode);
-    // console.log('body:', JSON.parse(body));
-
-    console.log("----------------------------------");
-    console.log("Title: " + JSON.parse(body).Title +
+      if (error) {
+        console.log('error:', error);
+        console.log('statusCode:', response && response.statusCode);
+      } else {
+        console.log("----------------------------------");
+        console.log("Title: " + JSON.parse(body).Title +
                 "\nYear: " + JSON.parse(body).Year +
                 "\nIMDB Rating: " + JSON.parse(body).imdbRating +
                 "\nRotten Tomatoes Rating: " + JSON.parse(body).Ratings[1].Value +
@@ -93,21 +94,21 @@ function movieFunc() {
                 "\nLanguage: " + JSON.parse(body).Language +
                 "\nPlot: " + JSON.parse(body).Plot +
                 "\nActors: "  + JSON.parse(body).Actors);
-      });
+        console.log("----------------------------------");
+      }
+
+    });
   }
-
 }
-
 
 console.log(process.argv);
 
 fs.writeFile('random.txt', 'spotify-this-song,"I Want it That Way"', function(error) {
   if (error) {
     return console.log(error);
-  } else {
-    //console.log('random.txt was updated!😏');
   }
 });
+
 
 function doItFunc() {
   fs.readFile('random.txt', "utf8", function(error, data) {
@@ -120,15 +121,11 @@ function doItFunc() {
       input = input + "+" + dataArr[i];
     }
 
-    allTheCommands()
-
-    console.log(dataArr);
-    console.log(dataArr[0]);
-    console.log(dataArr[1]);
+    commandCentral()
   })
 };
 
-function allTheCommands() {
+function commandCentral() {
 
 switch (command) {
   case "my-tweets":
@@ -152,10 +149,9 @@ switch (command) {
     break;
 
   default:
-    console.log("Please choose one of these commands: " + command.twitter + " " + command.spotify + " " + command.movie + " or " + command.random);
-
-}
+    console.log("Please type in 'node liri.js', followed by a space, and one of these commands: " +  "\nmy-tweets" + "\nspotify-this-song" + "\nmovie-this" + "\ndo-what-it-says");
+  }
 
 };
 
-allTheCommands()
+commandCentral()
